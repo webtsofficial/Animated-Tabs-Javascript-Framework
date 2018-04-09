@@ -10,6 +10,7 @@ class Tabs {
     linksElement: Element;
     contentsElement: Element;
     linkBarWidth: number;
+    inkBar: Element;
 
     constructor(tabsElement: Element, index: number) {
         // import parameters
@@ -28,6 +29,7 @@ class Tabs {
             this.setContentWidth();
             // add ink bar
             this.createInkBarElement();
+            this.inkBar = tabsElement.children[1];
             // set init Tab active
             this.setTabActive(0);
             // Event Listener definition
@@ -78,10 +80,21 @@ class Tabs {
             console.warn('contentsElement.children ist keine HTML-Collection');
         }
     }
+    createInkBarElement() : void {
+        let elem = <Element>document.createElement('div');
+        elem.classList.add('webts-ink-bar');
+        this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
+    }
+    moveInkBarToTab(index: number) : void {
+        let tabLink = <Element>this.linksElement.children[index],
+            tabLinkWidth = <number>tabLink.clientWidth,
+            inkBarWidth = <number>this.inkBar.clientWidth;
+    }
     setTabActive(index: number) : void {
         let tabs = <HTMLCollection>this.linksElement.children,
             contents = <HTMLCollection>this.contentsElement.children;
 
+        this.moveInkBarToTab(index);
         for(let i = 0; i < tabs.length; i++) {
             let actualTab = <Element>tabs[i],
                 actualContent = <Element>contents[i];
@@ -103,14 +116,6 @@ class Tabs {
                 }
             }
         }
-    }
-    createInkBarElement() : void {
-        let elem = <Element>document.createElement('div');
-        elem.classList.add('webts-ink-bar');
-        this.tabsElement.appendChild(elem);
-    }
-    moveInkBarToTab(index: number) : void {
-        let tabLink = <Element>this.linksElement.children[index];
     }
 
     // Event Listener Creation

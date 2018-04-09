@@ -30,15 +30,24 @@
       background-color: red;
     }
   }
+}
 
-  &.webts-ink-bar {
-    @include transition(all, $transition-time-slow, ease-in-out);
-  }
+// Ink Bar
+.webts-ink-bar {
+  @include transition(transform, $transition-time-medium, ease-in-out);
+  display: block;
+  width: 115px;
+  height: 4px;
+  margin: 2.5px 0;
+  position: relative;
+  background-color: red;
+  border-radius: 50px;
 }
 
 // tab-contents
 .webts-tab-contents {
   display: block;
+  padding: 10px 5px;
   clear: both;
 
   & > div {
@@ -46,7 +55,7 @@
     float: left;
     @include transition(transform, $transition-time-slow, ease-in-out);
 
-    &:active {
+    &.active {
 
     }
   }

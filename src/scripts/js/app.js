@@ -21,6 +21,7 @@ var Tabs = /** @class */ (function () {
             this.setContentWidth();
             // add ink bar
             this.createInkBarElement();
+            this.inkBar = tabsElement.children[1];
             // set init Tab active
             this.setTabActive(0);
             // Event Listener definition
@@ -69,8 +70,17 @@ var Tabs = /** @class */ (function () {
             console.warn('contentsElement.children ist keine HTML-Collection');
         }
     };
+    Tabs.prototype.createInkBarElement = function () {
+        var elem = document.createElement('div');
+        elem.classList.add('webts-ink-bar');
+        this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
+    };
+    Tabs.prototype.moveInkBarToTab = function (index) {
+        var tabLink = this.linksElement.children[index], tabLinkWidth = tabLink.clientWidth, inkBarWidth = this.inkBar.clientWidth;
+    };
     Tabs.prototype.setTabActive = function (index) {
         var tabs = this.linksElement.children, contents = this.contentsElement.children;
+        this.moveInkBarToTab(index);
         for (var i = 0; i < tabs.length; i++) {
             var actualTab = tabs[i], actualContent = contents[i];
             if (i !== index) {
@@ -92,14 +102,6 @@ var Tabs = /** @class */ (function () {
                 }
             }
         }
-    };
-    Tabs.prototype.createInkBarElement = function () {
-        var elem = document.createElement('div');
-        elem.classList.add('webts-ink-bar');
-        this.tabsElement.appendChild(elem);
-    };
-    Tabs.prototype.moveInkBarToTab = function (index) {
-        var tabLink = this.linksElement.children[index];
     };
     // Event Listener Creation
     Tabs.prototype.addTabClickEventListener = function () {
