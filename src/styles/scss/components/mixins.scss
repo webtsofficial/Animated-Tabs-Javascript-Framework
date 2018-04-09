@@ -4,3 +4,16 @@
   -o-transition: $property $time $timing;
   transition: $property $time $timing;
 }
+
+@mixin transform($value) {
+  -webkit-transform: $value;
+  -moz-transform: $value;
+  -o-transform: $value;
+  transform: $value;
+}
+@mixin transform-origin($value) {
+  -webkit-transform-origin: $value;
+  -moz-transform-origin: $value;
+  -o-transform-origin: $value;
+  transform-origin: $value;
+}

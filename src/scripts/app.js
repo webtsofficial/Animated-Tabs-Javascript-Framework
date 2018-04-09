@@ -80,7 +80,8 @@ var Tabs = /** @class */ (function () {
         var tabLink = this.linksElement.children[index], tabLinkWidth = tabLink.clientWidth, tabPosition = tabLink.getClientRects(), inkBarElem = this.inkBar, inkBarWidth = inkBarElem.clientWidth, baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
         if (tabLinkWidth !== this.inkBarWidth) {
             // width scaling and translateX inkBar while transition
-            inkBarElem.style.transform = 'scaleX(' + (tabLinkWidth / inkBarWidth) + ') translateX(' + (tabPosition[0].left - baseLeftDistance) + 'px)';
+            console.log(tabLinkWidth / inkBarWidth);
+            inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) + 'px) scaleX(' + (tabLinkWidth / inkBarWidth) + ')';
         }
         else {
             // only translateX must be applied

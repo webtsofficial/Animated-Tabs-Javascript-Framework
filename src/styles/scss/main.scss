@@ -34,7 +34,6 @@
 
 // Ink Bar
 .webts-ink-bar {
-  @include transition(transform, $transition-time-medium, ease-in-out);
   display: block;
   width: 115px;
   height: 4px;
@@ -42,6 +41,9 @@
   position: relative;
   background-color: red;
   border-radius: 50px;
+  @include transform-origin(left);
+  @include transform(translateX(0px));
+  @include transition(transform, $transition-time-medium, ease-in-out);
 }
 
 // tab-contents

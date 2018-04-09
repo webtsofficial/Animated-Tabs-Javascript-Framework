@@ -40,7 +40,7 @@ class Tabs {
         }
     }
 
-    findUniqueTabChildrenWithClass(className: string) : Element {
+    findUniqueTabChildrenWithClass(className: string) {
         let elements = [],
             tabElemChildren = <HTMLCollection>this.tabsElement.children;
 
@@ -88,8 +88,20 @@ class Tabs {
         this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
     }
     moveInkBarToTab(index: number) : void {
-        let tabLink = <Element>this.linksElement.children[index],
-            tabLinkWidth = <number>tabLink.clientWidth;
+        let tabLink = <HTMLElement>this.linksElement.children[index],
+            tabLinkWidth = <number>tabLink.clientWidth,
+            tabPosition = tabLink.getClientRects(),
+            inkBarElem = <HTMLElement>this.inkBar,
+            inkBarWidth = inkBarElem.clientWidth,
+            baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
+        if(tabLinkWidth !== this.inkBarWidth) {
+            // width scaling and translateX inkBar while transition
+            console.log(tabLinkWidth / inkBarWidth);
+            inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) +'px) scaleX('+ (tabLinkWidth / inkBarWidth) +')';
+        } else {
+            // only translateX must be applied
+            inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) +'px)';
+        }
     }
     setTabActive(index: number) : void {
         let tabs = <HTMLCollection>this.linksElement.children,
