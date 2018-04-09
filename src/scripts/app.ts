@@ -11,6 +11,7 @@ class Tabs {
     contentsElement: Element;
     linkBarWidth: number;
     inkBar: Element;
+    inkBarWidth: number;
 
     constructor(tabsElement: Element, index: number) {
         // import parameters
@@ -30,6 +31,7 @@ class Tabs {
             // add ink bar
             this.createInkBarElement();
             this.inkBar = tabsElement.children[1];
+            this.inkBarWidth = this.inkBar.clientWidth;
             // set init Tab active
             this.setTabActive(0);
             // Event Listener definition
@@ -87,8 +89,7 @@ class Tabs {
     }
     moveInkBarToTab(index: number) : void {
         let tabLink = <Element>this.linksElement.children[index],
-            tabLinkWidth = <number>tabLink.clientWidth,
-            inkBarWidth = <number>this.inkBar.clientWidth;
+            tabLinkWidth = <number>tabLink.clientWidth;
     }
     setTabActive(index: number) : void {
         let tabs = <HTMLCollection>this.linksElement.children,

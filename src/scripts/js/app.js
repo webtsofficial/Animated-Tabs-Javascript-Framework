@@ -22,6 +22,7 @@ var Tabs = /** @class */ (function () {
             // add ink bar
             this.createInkBarElement();
             this.inkBar = tabsElement.children[1];
+            this.inkBarWidth = this.inkBar.clientWidth;
             // set init Tab active
             this.setTabActive(0);
             // Event Listener definition
@@ -76,7 +77,7 @@ var Tabs = /** @class */ (function () {
         this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
     };
     Tabs.prototype.moveInkBarToTab = function (index) {
-        var tabLink = this.linksElement.children[index], tabLinkWidth = tabLink.clientWidth, inkBarWidth = this.inkBar.clientWidth;
+        var tabLink = this.linksElement.children[index], tabLinkWidth = tabLink.clientWidth;
     };
     Tabs.prototype.setTabActive = function (index) {
         var tabs = this.linksElement.children, contents = this.contentsElement.children;
