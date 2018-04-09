@@ -1,0 +1,61 @@
+@import "components/variables";
+@import "components/mixins";
+
+// tabs
+.webts-tabs {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+// tab-links
+.webts-tab-links {
+
+  & > div {
+    cursor: pointer;
+    display: inline-block;
+    min-width: 75px;
+    margin: 0;
+    padding: 10px 20px;
+    background-color: blue;
+    text-align: center;
+    @include transition(all, $transition-time-fast, ease-in-out);
+
+    &:hover {
+      background-color: red;
+    }
+
+    &.active {
+      background-color: red;
+    }
+  }
+
+  &.webts-ink-bar {
+    @include transition(all, $transition-time-slow, ease-in-out);
+  }
+}
+
+// tab-contents
+.webts-tab-contents {
+  display: block;
+  clear: both;
+
+  & > div {
+    display: block;
+    float: left;
+    @include transition(transform, $transition-time-slow, ease-in-out);
+
+    &:active {
+
+    }
+  }
+
+  &:before, &:after {
+    display: block;
+    visibility: hidden;
+    height: 0px;
+    content: ".";
+    clear: both;
+  }
+}
