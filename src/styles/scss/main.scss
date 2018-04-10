@@ -18,16 +18,16 @@
     min-width: 75px;
     margin: 0;
     padding: 10px 20px;
-    background-color: blue;
+    background-color: $color-tab-bg;
     text-align: center;
     @include transition(all, $transition-time-fast, ease-in-out);
 
     &:hover {
-      background-color: red;
+      background-color: $color-tab-hover-bg;
     }
 
     &.active {
-      background-color: red;
+      background-color: $color-tab-active-bg;
     }
   }
 }
@@ -39,7 +39,7 @@
   height: 4px;
   margin: 2.5px 0;
   position: relative;
-  background-color: red;
+  background-color: $color-ink-bar;
   border-radius: 50px;
   @include transform-origin(left);
   @include transform(translateX(0px));

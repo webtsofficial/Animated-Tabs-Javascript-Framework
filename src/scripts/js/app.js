@@ -8,7 +8,7 @@ var Tabs = /** @class */ (function () {
         // import parameters
         this.index = index;
         this.tabsElement = tabsElement;
-        // fill existing parmeters with external parameter help
+        // fill existing parameters with external parameter help
         this.linksElement = this.findUniqueTabChildrenWithClass('webts-tab-links');
         this.contentsElement = this.findUniqueTabChildrenWithClass('webts-tab-contents');
         // check if count tabs = count contents
@@ -80,7 +80,7 @@ var Tabs = /** @class */ (function () {
         var tabLink = this.linksElement.children[index], tabLinkWidth = tabLink.clientWidth, tabPosition = tabLink.getClientRects(), inkBarElem = this.inkBar, inkBarWidth = inkBarElem.clientWidth, baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
         if (tabLinkWidth !== this.inkBarWidth) {
             // width scaling and translateX inkBar while transition
-            inkBarElem.style.transform = 'scaleX(' + (tabLinkWidth / inkBarWidth) + ') translateX(' + (tabPosition[0].left - baseLeftDistance) + 'px)';
+            inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) + 'px) scaleX(' + (tabLinkWidth / inkBarWidth) + ')';
         }
         else {
             // only translateX must be applied
@@ -111,6 +111,9 @@ var Tabs = /** @class */ (function () {
                 }
             }
         }
+    };
+    Tabs.prototype.slideContentToActiveTab = function (index) {
+        var contentElem = this.contentsElement.children[index];
     };
     // Event Listener Creation
     Tabs.prototype.addTabClickEventListener = function () {

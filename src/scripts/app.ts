@@ -17,7 +17,7 @@ class Tabs {
         // import parameters
         this.index = index;
         this.tabsElement = tabsElement;
-        // fill existing parmeters with external parameter help
+        // fill existing parameters with external parameter help
         this.linksElement = this.findUniqueTabChildrenWithClass('webts-tab-links');
         this.contentsElement = this.findUniqueTabChildrenWithClass('webts-tab-contents');
 
@@ -96,7 +96,6 @@ class Tabs {
             baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
         if(tabLinkWidth !== this.inkBarWidth) {
             // width scaling and translateX inkBar while transition
-            console.log(tabLinkWidth / inkBarWidth);
             inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) +'px) scaleX('+ (tabLinkWidth / inkBarWidth) +')';
         } else {
             // only translateX must be applied
@@ -129,6 +128,11 @@ class Tabs {
                 }
             }
         }
+    }
+    slideContentToActiveTab(index: number) {
+        let contentElem = <HTMLElement>this.contentsElement.children[index],
+            contentsElem = <HTMLElement>this.contentsElement;
+
     }
 
     // Event Listener Creation
