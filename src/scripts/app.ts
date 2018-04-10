@@ -9,6 +9,7 @@ class Tabs {
     tabsElement: Element;
     linksElement: Element;
     contentsElement: Element;
+    contentInitLeftPos: any;
     linkBarWidth: number;
     inkBar: Element;
     inkBarWidth: number;
@@ -28,6 +29,7 @@ class Tabs {
             // init styling methods
             this.linkBarWidth = this.getTabContentWidth();
             this.setContentWidth();
+            this.setContentInitLeftPos();
             // add ink bar
             this.createInkBarElement();
             this.inkBar = tabsElement.children[1];
@@ -82,6 +84,16 @@ class Tabs {
             console.warn('contentsElement.children ist keine HTML-Collection');
         }
     }
+    setContentInitLeftPos() {
+        let contentsChildren = this.contentsElement.children;
+        this.contentInitLeftPos = [];
+
+        for(let i = 0; i < contentsChildren.length; i++) {
+            let contentElem = <HTMLElement>contentsChildren[i],
+                contentLeft = <number>contentElem.getClientRects()[0].left;
+            this.contentInitLeftPos.push(contentLeft);
+        }
+    }
     createInkBarElement() : void {
         let elem = <Element>document.createElement('div');
         elem.classList.add('webts-ink-bar');
@@ -102,11 +114,19 @@ class Tabs {
             inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) +'px)';
         }
     }
+    slideContentToActiveTab(index: number) {
+        let contentElem = <HTMLElement>this.contentsElement.children[index],
+            contents = <HTMLElement>this.contentsElement,
+            contentElemLeft = contentElem.getClientRects()[0].left,
+            contentsLeft = contents.getClientRects()[0].left;
+        contents.style.transform = 'translateX(-'+ this.contentInitLeftPos[index] +'px)';
+    }
     setTabActive(index: number) : void {
         let tabs = <HTMLCollection>this.linksElement.children,
             contents = <HTMLCollection>this.contentsElement.children;
 
         this.moveInkBarToTab(index);
+        this.slideContentToActiveTab(index);
         for(let i = 0; i < tabs.length; i++) {
             let actualTab = <Element>tabs[i],
                 actualContent = <Element>contents[i];
@@ -129,11 +149,6 @@ class Tabs {
             }
         }
     }
-    slideContentToActiveTab(index: number) {
-        let contentElem = <HTMLElement>this.contentsElement.children[index],
-            contentsElem = <HTMLElement>this.contentsElement;
-
-    }
 
     // Event Listener Creation
     addTabClickEventListener() : void {
@@ -150,6 +165,8 @@ class Tabs {
         window.addEventListener('resize', () => {
             this.getTabContentWidth();
             this.setContentWidth();
+            this.setTabActive(0);
+            this.setContentInitLeftPos();
         });
     }
 
@@ -157,14 +174,11 @@ class Tabs {
 
 // Onload
 window.onload = function () {
+    let allTabs = [];
     for (let allTabsIndex:number = 0; allTabsIndex < allTabsArray.length; allTabsIndex++) {
         let tabLinkBar = allTabLinksArray[allTabsIndex],
-            tabContentBox = allTabContentsArray[allTabsIndex];
-        let tab = new Tabs(allTabsArray[allTabsIndex], allTabsIndex);
-
-        // window on-resize event
-        window.onresize = function (ev) {
-
-        };
+            tabContentBox = allTabContentsArray[allTabsIndex],
+            tab = new Tabs(allTabsArray[allTabsIndex], allTabsIndex);
+        allTabs.push(tab);
     }
 };

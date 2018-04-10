@@ -19,6 +19,7 @@ var Tabs = /** @class */ (function () {
             // init styling methods
             this.linkBarWidth = this.getTabContentWidth();
             this.setContentWidth();
+            this.setContentInitLeftPos();
             // add ink bar
             this.createInkBarElement();
             this.inkBar = tabsElement.children[1];
@@ -71,6 +72,14 @@ var Tabs = /** @class */ (function () {
             console.warn('contentsElement.children ist keine HTML-Collection');
         }
     };
+    Tabs.prototype.setContentInitLeftPos = function () {
+        var contentsChildren = this.contentsElement.children;
+        this.contentInitLeftPos = [];
+        for (var i = 0; i < contentsChildren.length; i++) {
+            var contentElem = contentsChildren[i], contentLeft = contentElem.getClientRects()[0].left;
+            this.contentInitLeftPos.push(contentLeft);
+        }
+    };
     Tabs.prototype.createInkBarElement = function () {
         var elem = document.createElement('div');
         elem.classList.add('webts-ink-bar');
@@ -87,9 +96,14 @@ var Tabs = /** @class */ (function () {
             inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) + 'px)';
         }
     };
+    Tabs.prototype.slideContentToActiveTab = function (index) {
+        var contentElem = this.contentsElement.children[index], contents = this.contentsElement, contentElemLeft = contentElem.getClientRects()[0].left, contentsLeft = contents.getClientRects()[0].left;
+        contents.style.transform = 'translateX(-' + this.contentInitLeftPos[index] + 'px)';
+    };
     Tabs.prototype.setTabActive = function (index) {
         var tabs = this.linksElement.children, contents = this.contentsElement.children;
         this.moveInkBarToTab(index);
+        this.slideContentToActiveTab(index);
         for (var i = 0; i < tabs.length; i++) {
             var actualTab = tabs[i], actualContent = contents[i];
             if (i !== index) {
@@ -112,9 +126,6 @@ var Tabs = /** @class */ (function () {
             }
         }
     };
-    Tabs.prototype.slideContentToActiveTab = function (index) {
-        var contentElem = this.contentsElement.children[index], contentsElem = this.contentsElement;
-    };
     // Event Listener Creation
     Tabs.prototype.addTabClickEventListener = function () {
         var _this = this;
@@ -134,17 +145,17 @@ var Tabs = /** @class */ (function () {
         window.addEventListener('resize', function () {
             _this.getTabContentWidth();
             _this.setContentWidth();
+            _this.setTabActive(0);
+            _this.setContentInitLeftPos();
         });
     };
     return Tabs;
 }());
 // Onload
 window.onload = function () {
+    var allTabs = [];
     for (var allTabsIndex = 0; allTabsIndex < allTabsArray.length; allTabsIndex++) {
-        var tabLinkBar = allTabLinksArray[allTabsIndex], tabContentBox = allTabContentsArray[allTabsIndex];
-        var tab = new Tabs(allTabsArray[allTabsIndex], allTabsIndex);
-        // window on-resize event
-        window.onresize = function (ev) {
-        };
+        var tabLinkBar = allTabLinksArray[allTabsIndex], tabContentBox = allTabContentsArray[allTabsIndex], tab = new Tabs(allTabsArray[allTabsIndex], allTabsIndex);
+        allTabs.push(tab);
     }
 };

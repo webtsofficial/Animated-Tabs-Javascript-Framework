@@ -4,6 +4,12 @@
   -o-transition: $property $time $timing;
   transition: $property $time $timing;
 }
+@mixin transition-multiple($values...) {
+  -webkit-transition: $values;
+  -moz-transition: $values;
+  -o-transition: $values;
+  transition: $values;
+}
 
 @mixin transform($value) {
   -webkit-transform: $value;

@@ -1,6 +1,12 @@
 @import "components/variables";
 @import "components/mixins";
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 // tabs
 .webts-tabs {
   display: block;
@@ -11,6 +17,8 @@
 
 // tab-links
 .webts-tab-links {
+  overflow-y: scroll;
+  @include transition(transform, $transition-time-medium, ease-in-out);
 
   & > div {
     cursor: pointer;
@@ -20,7 +28,7 @@
     padding: 10px 20px;
     background-color: $color-tab-bg;
     text-align: center;
-    @include transition(all, $transition-time-fast, ease-in-out);
+    @include transition-multiple(background-color $transition-time-fast ease-in-out, transform $transition-time-medium ease-in-out);
 
     &:hover {
       background-color: $color-tab-hover-bg;
@@ -49,8 +57,9 @@
 // tab-contents
 .webts-tab-contents {
   display: block;
-  padding: 10px 5px;
+  padding: 10px 0;
   clear: both;
+  @include transition(transform, $transition-time-medium, ease-in-out);
 
   & > div {
     display: block;
@@ -58,7 +67,6 @@
     @include transition(transform, $transition-time-slow, ease-in-out);
 
     &.active {
-
     }
   }
 
