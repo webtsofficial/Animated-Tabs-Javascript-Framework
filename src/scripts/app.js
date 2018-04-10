@@ -61,11 +61,11 @@ var Tabs = /** @class */ (function () {
     Tabs.prototype.setContentWidth = function () {
         var contentsChilds = this.contentsElement.children;
         // set total content width
-        this.contentsElement.setAttribute('style', 'width: ' + (this.linkBarWidth * contentsChilds.length) + 'px');
+        this.contentsElement.setAttribute('style', 'width: ' + (this.tabsElement.clientWidth * contentsChilds.length) + 'px');
         if (contentsChilds instanceof HTMLCollection) {
             for (var i = 0; i < contentsChilds.length; i++) {
                 var contentElem = contentsChilds[i];
-                contentElem.setAttribute('style', 'width:' + this.linkBarWidth + 'px');
+                contentElem.setAttribute('style', 'width:' + this.tabsElement.clientWidth + 'px');
             }
         }
         else {

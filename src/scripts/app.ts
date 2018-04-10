@@ -1,5 +1,5 @@
 // all Tab Elements
-const allTabsArray = <HTMLCollection>document.getElementsByClassName('webts-tabs'),                  // all webts-tab Elements
+const allTabsArray = <HTMLCollection>document.getElementsByClassName('webts-tabs'),                // all webts-tab Elements
     allTabLinksArray = <HTMLCollection>document.getElementsByClassName('webts-tab-links'),         // all webts-tab-link Elements
     allTabContentsArray = <HTMLCollection>document.getElementsByClassName('webts-tab-contents');   //all webts-content Elements
 
@@ -11,6 +11,7 @@ class Tabs {
     contentsElement: Element;
     contentInitLeftPos: any;
     linkBarWidth: number;
+    contentWidth: number;
     inkBar: Element;
     inkBarWidth: number;
 
@@ -63,7 +64,7 @@ class Tabs {
     }
     getTabContentWidth() : number {
         if(this.linksElement instanceof Element) {
-            return this.linksElement.getBoundingClientRect().width;
+            return this.tabsElement.clientWidth;
         } else {
             console.warn('linksElement is not of type Element!');
             return 0;
@@ -73,12 +74,12 @@ class Tabs {
         let contentsChilds = <HTMLCollection>this.contentsElement.children;
 
         // set total content width
-        this.contentsElement.setAttribute('style', 'width: ' + (this.linkBarWidth * contentsChilds.length) + 'px');
+        this.contentsElement.setAttribute('style', 'width: ' + (this.tabsElement.clientWidth * contentsChilds.length) + 'px');
 
         if(contentsChilds instanceof HTMLCollection) {
             for(let i = 0; i < contentsChilds.length; i++) {
                 let contentElem = contentsChilds[i];
-                contentElem.setAttribute('style', 'width:' + this.linkBarWidth + 'px');
+                contentElem.setAttribute('style', 'width:' + this.tabsElement.clientWidth + 'px');
             }
         } else {
             console.warn('contentsElement.children ist keine HTML-Collection');

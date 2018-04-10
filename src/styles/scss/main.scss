@@ -17,7 +17,8 @@
 
 // tab-links
 .webts-tab-links {
-  overflow-y: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
   @include transition(transform, $transition-time-medium, ease-in-out);
 
   & > div {
