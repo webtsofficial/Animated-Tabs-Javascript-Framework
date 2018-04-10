@@ -17,6 +17,7 @@
 
 // tab-links
 .webts-tab-links {
+  margin: 0 auto;
   overflow-y: hidden;
   white-space: nowrap;
   @include transition(transform, $transition-time-medium, ease-in-out);
@@ -37,6 +38,11 @@
 
     &.active {
       background-color: $color-tab-active-bg;
+    }
+    &.webts-overfow-swap {
+      display: inline-block;
+      width: 30px;
+      text-align: center;
     }
   }
 }

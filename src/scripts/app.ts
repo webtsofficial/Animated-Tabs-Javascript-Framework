@@ -5,10 +5,16 @@ const allTabsArray = <HTMLCollection>document.getElementsByClassName('webts-tabs
 
 // Tabs constructor function
 class Tabs {
+    // external / import parameters
     index: number;
     tabsElement: Element;
+    // internal parameters
+    screenWidth: number;
     linksElement: Element;
+    linksChildren: HTMLCollection;
+    linksTotalWidth: number;
     contentsElement: Element;
+    contentsChildren: HTMLCollection;
     contentInitLeftPos: any;
     linkBarWidth: number;
     contentWidth: number;
@@ -19,9 +25,12 @@ class Tabs {
         // import parameters
         this.index = index;
         this.tabsElement = tabsElement;
+        this.screenWidth = window.innerWidth; // screen width
         // fill existing parameters with external parameter help
         this.linksElement = this.findUniqueTabChildrenWithClass('webts-tab-links');
         this.contentsElement = this.findUniqueTabChildrenWithClass('webts-tab-contents');
+        this.linksChildren = this.linksElement.children;
+        this.contentsChildren = this.contentsElement.children;
 
         // check if count tabs = count contents
         if(this.linksElement.children.length !== this.contentsElement.children.length) {
@@ -29,8 +38,11 @@ class Tabs {
         } else {
             // init styling methods
             this.linkBarWidth = this.getTabContentWidth();
+            this.updateTabSwapper();
             this.setContentWidth();
             this.setContentInitLeftPos();
+            // tab swapper
+            this.updateTabSwapper();
             // add ink bar
             this.createInkBarElement();
             this.inkBar = tabsElement.children[1];
@@ -43,7 +55,7 @@ class Tabs {
         }
     }
 
-    findUniqueTabChildrenWithClass(className: string) {
+    findUniqueTabChildrenWithClass(className: string) : Element {
         let elements = [],
             tabElemChildren = <HTMLCollection>this.tabsElement.children;
 
@@ -57,8 +69,10 @@ class Tabs {
             return elements[0];
         } else if(elements.length < 1) {
             console.warn('Es gibt kein Element mit der Klasse ' + className + ' innerhalb der webts-Tab-Box');
+            return new Element();
         } else {
             console.warn('Es gibt mehrere Elemente mit der Klasse ' + className + ' innerhalb der webts-Tab-Box');
+            return new Element();
         }
 
     }
@@ -71,8 +85,7 @@ class Tabs {
         }
     }
     setContentWidth() : void {
-        let contentsChilds = <HTMLCollection>this.contentsElement.children;
-
+        let contentsChilds = <HTMLCollection>this.contentsChildren;
         // set total content width
         this.contentsElement.setAttribute('style', 'width: ' + (this.tabsElement.clientWidth * contentsChilds.length) + 'px');
 
@@ -86,7 +99,7 @@ class Tabs {
         }
     }
     setContentInitLeftPos() {
-        let contentsChildren = this.contentsElement.children;
+        let contentsChildren = this.contentsChildren;
         this.contentInitLeftPos = [];
 
         for(let i = 0; i < contentsChildren.length; i++) {
@@ -98,10 +111,12 @@ class Tabs {
     createInkBarElement() : void {
         let elem = <Element>document.createElement('div');
         elem.classList.add('webts-ink-bar');
+        // todo: check if parent exist
         this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
     }
+    updateInkBarInitPos() : void {}
     moveInkBarToTab(index: number) : void {
-        let tabLink = <HTMLElement>this.linksElement.children[index],
+        let tabLink = <HTMLElement>this.linksChildren[index],
             tabLinkWidth = <number>tabLink.clientWidth,
             tabPosition = tabLink.getClientRects(),
             inkBarElem = <HTMLElement>this.inkBar,
@@ -116,15 +131,18 @@ class Tabs {
         }
     }
     slideContentToActiveTab(index: number) {
-        let contentElem = <HTMLElement>this.contentsElement.children[index],
+        let contentElem = <HTMLElement>this.contentsChildren[index],
             contents = <HTMLElement>this.contentsElement,
             contentElemLeft = contentElem.getClientRects()[0].left,
             contentsLeft = contents.getClientRects()[0].left;
         contents.style.transform = 'translateX(-'+ this.contentInitLeftPos[index] +'px)';
     }
+    setTabElemWidth(width: number) : void {
+        // todo: set tab elem width and center position
+    }
     setTabActive(index: number) : void {
-        let tabs = <HTMLCollection>this.linksElement.children,
-            contents = <HTMLCollection>this.contentsElement.children;
+        let tabs = <HTMLCollection>this.linksChildren,
+            contents = <HTMLCollection>this.contentsChildren;
 
         this.moveInkBarToTab(index);
         this.slideContentToActiveTab(index);
@@ -150,6 +168,50 @@ class Tabs {
             }
         }
     }
+    updateTabLinksTotalWidth() : void {
+        let tabsTotalWidth = 0;
+
+        for(let i = 0; i < this.linksChildren.length; i++) {
+            tabsTotalWidth += this.linksChildren[i].clientWidth;
+        }
+        this.linksTotalWidth = tabsTotalWidth;
+    }
+    updateTabSwapper() : void {
+        // insert id tabs total width bigger than 260px - not 320px because  30px for each side swapper
+        // todo if else statement for checling if swapper exist + check if parent exist
+        let maxWidth = this.linksElement.parentElement.clientWidth - 60;
+        if(this.linksTotalWidth > maxWidth) {
+            // insert swapper if not existing
+            if(!this.checkIfSwapperExist()) {
+                // set tabBar width for swapper
+                this.setTabElemWidth(maxWidth);
+                // insert swapper
+                let swapperLeftElem =   document.createElement('div'),
+                    swapperRightElem =  document.createElement('div');
+                swapperLeftElem.classList.add('webts-swapper');
+                swapperRightElem.classList.add('webts-swapper');
+                swapperLeftElem.classList.add('webts-swapper-left');
+                swapperRightElem.classList.add('webts-swapper-right');
+            }
+        } else {
+            // if exist delete swapper
+            if(this.checkIfSwapperExist()) {
+
+            }
+        }
+    }
+    checkIfSwapperExist() : boolean {
+        if(1 === 1) {
+            return true;
+        }
+        return false;
+    }
+    swapLeft() : void {
+
+    }
+    swapRight() : void {
+
+    }
 
     // Event Listener Creation
     addTabClickEventListener() : void {
@@ -164,8 +226,10 @@ class Tabs {
     }
     addWindowResizeEventListener() : void {
         window.addEventListener('resize', () => {
+            this.screenWidth = window.innerWidth; // update screen width
             this.getTabContentWidth();
             this.setContentWidth();
+            this.updateTabSwapper();
             this.setTabActive(0);
             this.setContentInitLeftPos();
         });
