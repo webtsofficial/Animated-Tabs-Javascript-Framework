@@ -20,6 +20,8 @@ class Tabs {
     contentWidth: number;
     inkBar: Element;
     inkBarWidth: number;
+    swapperLeftElem:  HTMLElement | null;
+    swapperRightElem: HTMLElement | null;
 
     constructor(tabsElement: Element, index: number) {
         // import parameters
@@ -194,12 +196,26 @@ class Tabs {
                     // set tabBar width for swapper
                     this.setTabElemWidth(maxWidth);
                     // insert swapper
-                    let swapperLeftElem =   document.createElement('div'),
-                        swapperRightElem =  document.createElement('div');
+                    // create elems
+                    let swapperLeftElem  =  <HTMLElement>document.createElement('div'),
+                        swapperRightElem =  <HTMLElement>document.createElement('div'),
+                        tabsElemClientRect = this.tabsElement.getClientRects()[0];
+                    // add classes
                     swapperLeftElem.classList.add('webts-swapper');
                     swapperRightElem.classList.add('webts-swapper');
                     swapperLeftElem.classList.add('webts-swapper-left');
                     swapperRightElem.classList.add('webts-swapper-right');
+                    // add styles
+                    swapperLeftElem.style.left   = tabsElemClientRect.left + 'px';
+                    swapperLeftElem.style.top    = tabsElemClientRect.top + 'px';
+                    swapperRightElem.style.right = tabsElemClientRect.right + 'px';
+                    swapperRightElem.style.top   = tabsElemClientRect.top + 'px';
+                    // add text
+                    swapperLeftElem.innerText = '<';
+                    swapperRightElem.innerText = '>';
+                    // insert after tab-contents
+                    this.tabsElement.appendChild(swapperLeftElem);
+                    this.tabsElement.appendChild(swapperRightElem);
                 }
             } else {
                 // if exist delete swapper
@@ -212,7 +228,8 @@ class Tabs {
         }
     }
     checkIfSwapperExist() : boolean {
-        if(1 === 1) {
+        if(this.tabsElement.getElementsByClassName('webts-swapper-left')[0] instanceof HTMLElement &&
+           this.tabsElement.getElementsByClassName('webts-swapper-right')[0] instanceof HTMLElement) {
             return true;
         }
         return false;

@@ -163,11 +163,24 @@ var Tabs = /** @class */ (function () {
                     // set tabBar width for swapper
                     this.setTabElemWidth(maxWidth);
                     // insert swapper
-                    var swapperLeftElem = document.createElement('div'), swapperRightElem = document.createElement('div');
+                    // create elems
+                    var swapperLeftElem = document.createElement('div'), swapperRightElem = document.createElement('div'), tabsElemClientRect = this.tabsElement.getClientRects()[0];
+                    // add classes
                     swapperLeftElem.classList.add('webts-swapper');
                     swapperRightElem.classList.add('webts-swapper');
                     swapperLeftElem.classList.add('webts-swapper-left');
                     swapperRightElem.classList.add('webts-swapper-right');
+                    // add styles
+                    swapperLeftElem.style.left = tabsElemClientRect.left + 'px';
+                    swapperLeftElem.style.top = tabsElemClientRect.top + 'px';
+                    swapperRightElem.style.right = tabsElemClientRect.right + 'px';
+                    swapperRightElem.style.top = tabsElemClientRect.top + 'px';
+                    // add text
+                    swapperLeftElem.innerText = '<';
+                    swapperRightElem.innerText = '>';
+                    // insert after tab-contents
+                    this.tabsElement.appendChild(swapperLeftElem);
+                    this.tabsElement.appendChild(swapperRightElem);
                 }
             }
             else {
@@ -182,7 +195,7 @@ var Tabs = /** @class */ (function () {
     };
     Tabs.prototype.checkIfSwapperExist = function () {
         if (1 === 1) {
-            return true;
+            return false; // todo: make true and fill if stmt
         }
         return false;
     };

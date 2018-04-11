@@ -17,8 +17,6 @@
 
 // tab-links
 .webts-tab-links {
-  margin: 0 auto;
-  overflow-y: hidden;
   white-space: nowrap;
   @include transition(transform, $transition-time-medium, ease-in-out);
 
@@ -84,4 +82,15 @@
     content: ".";
     clear: both;
   }
+}
+
+// Swapper
+.webts-swapper {
+  position: absolute;
+}
+.webts-swapper-left {
+
+}
+.webts-swapper-right {
+
 }
