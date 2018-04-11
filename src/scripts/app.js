@@ -91,10 +91,16 @@ var Tabs = /** @class */ (function () {
     Tabs.prototype.createInkBarElement = function () {
         var elem = document.createElement('div');
         elem.classList.add('webts-ink-bar');
-        // todo: check if parent exist
-        this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
+        if (this.linksElement.parentNode instanceof HTMLElement) {
+            this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
+        }
+        else {
+            console.warn('Das Eltern Element zum erstellen der InkBar ist kein HTML Element!');
+        }
     };
-    Tabs.prototype.updateInkBarInitPos = function () { };
+    // todo
+    Tabs.prototype.updateInkBarInitPos = function () {
+    };
     Tabs.prototype.moveInkBarToTab = function (index) {
         var tabLink = this.linksChildren[index], tabLinkWidth = tabLink.clientWidth, tabPosition = tabLink.getClientRects(), inkBarElem = this.inkBar, inkBarWidth = inkBarElem.clientWidth, baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
         if (tabLinkWidth !== this.inkBarWidth) {
@@ -110,8 +116,8 @@ var Tabs = /** @class */ (function () {
         var contentElem = this.contentsChildren[index], contents = this.contentsElement, contentElemLeft = contentElem.getClientRects()[0].left, contentsLeft = contents.getClientRects()[0].left;
         contents.style.transform = 'translateX(-' + this.contentInitLeftPos[index] + 'px)';
     };
+    // todo: set tab elem width and center position
     Tabs.prototype.setTabElemWidth = function (width) {
-        // todo: set tab elem width and center position
     };
     Tabs.prototype.setTabActive = function (index) {
         var tabs = this.linksChildren, contents = this.contentsChildren;
@@ -149,24 +155,29 @@ var Tabs = /** @class */ (function () {
     Tabs.prototype.updateTabSwapper = function () {
         // insert id tabs total width bigger than 260px - not 320px because  30px for each side swapper
         // todo if else statement for checling if swapper exist + check if parent exist
-        var maxWidth = this.linksElement.parentElement.clientWidth - 60;
-        if (this.linksTotalWidth > maxWidth) {
-            // insert swapper if not existing
-            if (!this.checkIfSwapperExist()) {
-                // set tabBar width for swapper
-                this.setTabElemWidth(maxWidth);
-                // insert swapper
-                var swapperLeftElem = document.createElement('div'), swapperRightElem = document.createElement('div');
-                swapperLeftElem.classList.add('webts-swapper');
-                swapperRightElem.classList.add('webts-swapper');
-                swapperLeftElem.classList.add('webts-swapper-left');
-                swapperRightElem.classList.add('webts-swapper-right');
+        if (this.linksElement.parentElement instanceof HTMLElement) {
+            var maxWidth = this.linksElement.parentElement.clientWidth - 60;
+            if (this.linksTotalWidth > maxWidth) {
+                // insert swapper if not existing
+                if (!this.checkIfSwapperExist()) {
+                    // set tabBar width for swapper
+                    this.setTabElemWidth(maxWidth);
+                    // insert swapper
+                    var swapperLeftElem = document.createElement('div'), swapperRightElem = document.createElement('div');
+                    swapperLeftElem.classList.add('webts-swapper');
+                    swapperRightElem.classList.add('webts-swapper');
+                    swapperLeftElem.classList.add('webts-swapper-left');
+                    swapperRightElem.classList.add('webts-swapper-right');
+                }
+            }
+            else {
+                // if exist delete swapper
+                if (this.checkIfSwapperExist()) {
+                }
             }
         }
         else {
-            // if exist delete swapper
-            if (this.checkIfSwapperExist()) {
-            }
+            console.warn('Parent Element for maxWidth in SwapperPos calculation not HTML Element!');
         }
     };
     Tabs.prototype.checkIfSwapperExist = function () {
@@ -176,8 +187,10 @@ var Tabs = /** @class */ (function () {
         return false;
     };
     Tabs.prototype.swapLeft = function () {
+        // updateInkBarPosition()
     };
     Tabs.prototype.swapRight = function () {
+        // updateInkBarPosition()
     };
     // Event Listener Creation
     Tabs.prototype.addTabClickEventListener = function () {

@@ -111,10 +111,16 @@ class Tabs {
     createInkBarElement() : void {
         let elem = <Element>document.createElement('div');
         elem.classList.add('webts-ink-bar');
-        // todo: check if parent exist
-        this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
+        if(this.linksElement.parentNode instanceof HTMLElement) {
+            this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
+        } else {
+            console.warn('Das Eltern Element zum erstellen der InkBar ist kein HTML Element!');
+        }
     }
-    updateInkBarInitPos() : void {}
+    // todo
+    updateInkBarInitPos() : void {
+
+    }
     moveInkBarToTab(index: number) : void {
         let tabLink = <HTMLElement>this.linksChildren[index],
             tabLinkWidth = <number>tabLink.clientWidth,
@@ -137,8 +143,9 @@ class Tabs {
             contentsLeft = contents.getClientRects()[0].left;
         contents.style.transform = 'translateX(-'+ this.contentInitLeftPos[index] +'px)';
     }
+    // todo: set tab elem width and center position
     setTabElemWidth(width: number) : void {
-        // todo: set tab elem width and center position
+
     }
     setTabActive(index: number) : void {
         let tabs = <HTMLCollection>this.linksChildren,
@@ -179,25 +186,29 @@ class Tabs {
     updateTabSwapper() : void {
         // insert id tabs total width bigger than 260px - not 320px because  30px for each side swapper
         // todo if else statement for checling if swapper exist + check if parent exist
-        let maxWidth = this.linksElement.parentElement.clientWidth - 60;
-        if(this.linksTotalWidth > maxWidth) {
-            // insert swapper if not existing
-            if(!this.checkIfSwapperExist()) {
-                // set tabBar width for swapper
-                this.setTabElemWidth(maxWidth);
-                // insert swapper
-                let swapperLeftElem =   document.createElement('div'),
-                    swapperRightElem =  document.createElement('div');
-                swapperLeftElem.classList.add('webts-swapper');
-                swapperRightElem.classList.add('webts-swapper');
-                swapperLeftElem.classList.add('webts-swapper-left');
-                swapperRightElem.classList.add('webts-swapper-right');
+        if(this.linksElement.parentElement instanceof HTMLElement) {
+            let maxWidth = this.linksElement.parentElement.clientWidth - 60;
+            if(this.linksTotalWidth > maxWidth) {
+                // insert swapper if not existing
+                if(!this.checkIfSwapperExist()) {
+                    // set tabBar width for swapper
+                    this.setTabElemWidth(maxWidth);
+                    // insert swapper
+                    let swapperLeftElem =   document.createElement('div'),
+                        swapperRightElem =  document.createElement('div');
+                    swapperLeftElem.classList.add('webts-swapper');
+                    swapperRightElem.classList.add('webts-swapper');
+                    swapperLeftElem.classList.add('webts-swapper-left');
+                    swapperRightElem.classList.add('webts-swapper-right');
+                }
+            } else {
+                // if exist delete swapper
+                if(this.checkIfSwapperExist()) {
+
+                }
             }
         } else {
-            // if exist delete swapper
-            if(this.checkIfSwapperExist()) {
-
-            }
+            console.warn('Parent Element for maxWidth in SwapperPos calculation not HTML Element!');
         }
     }
     checkIfSwapperExist() : boolean {
@@ -207,10 +218,10 @@ class Tabs {
         return false;
     }
     swapLeft() : void {
-
+        // updateInkBarPosition()
     }
     swapRight() : void {
-
+        // updateInkBarPosition()
     }
 
     // Event Listener Creation
