@@ -40,8 +40,12 @@ class Tabs {
         this.contentsElement = this.findUniqueTabChildrenWithClass('webts-tab-contents');
         this.linksChildren = this.linksElement.children;
         this.contentsChildren = this.contentsElement.children;
-        this.linkBarFirstChildLeft = this.linksElement.firstElementChild.clientLeft;
-        this.linkBarLastChildRight = this.linksElement.lastElementChild.getClientRects()[0].right;
+        if(this.linksElement.firstElementChild && this.linksElement.lastElementChild) {
+            this.linkBarFirstChildLeft = this.linksElement.firstElementChild.clientLeft;
+            this.linkBarLastChildRight = this.linksElement.lastElementChild.getClientRects()[0].right;
+        } else {
+            console.warn('LinkBarFirstChild-Element und LinkBarLastChild-Element sind nicht definiert');
+        }
 
         // check if count tabs = count contents
         if(this.linksElement.children.length !== this.contentsElement.children.length) {
@@ -116,6 +120,7 @@ class Tabs {
             let contentElem = <HTMLElement>contentsChildren[i],
                 contentLeft = <number>contentElem.getClientRects()[0].left;
             this.contentInitLeftPos.push(contentLeft);
+            console.log(this.contentInitLeftPos)
         }
     }
     createInkBarElement() : void {
