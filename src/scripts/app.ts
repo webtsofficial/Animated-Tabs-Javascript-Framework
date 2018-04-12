@@ -15,13 +15,14 @@ class Tabs {
     linksElement: Element;
     linksChildren: HTMLCollection;
     linksTotalWidth: number;
+    linkBarInitPos: ClientRect;
     // content
     contentsElement: Element;
     contentsChildren: HTMLCollection;
     contentInitLeftPos: any;
     // inkBar
     contentWidth: number;
-    inkBar: Element;
+    inkBar: HTMLElement;
     inkBarWidth: number;
     // swapper
     swapperLeftElem:  HTMLElement;
@@ -46,11 +47,12 @@ class Tabs {
             this.updateTabLinksTotalWidth();
             this.setContentWidth();
             this.setContentInitLeftPos();
+            this.linkBarInitPos = this.linksElement.getClientRects()[0];
             // tab swapper
             this.updateTabSwapper();
             // add ink bar
             this.createInkBarElement();
-            this.inkBar = tabsElement.children[1];
+            this.inkBar = <HTMLElement>tabsElement.children[1];
             this.inkBarWidth = this.inkBar.clientWidth;
             // set init Tab active
             this.setTabActive(0);
@@ -122,9 +124,14 @@ class Tabs {
             console.warn('Das Eltern Element zum erstellen der InkBar ist kein HTML Element!');
         }
     }
-    // todo
     getActiveTabIndex() : number {
-        return 1;
+        for(let i = 0; i < this.linksChildren.length; i++) {
+            let link = this.linksChildren[i];
+            if(link.classList.contains('active')) {
+                return i;
+            }
+        }
+        return NaN;
     }
     moveInkBarToTab(index: number) : void {
         let tabLink = <HTMLElement>this.linksChildren[index],
@@ -147,10 +154,6 @@ class Tabs {
             contentElemLeft = contentElem.getClientRects()[0].left,
             contentsLeft = contents.getClientRects()[0].left;
         contents.style.transform = 'translateX(-'+ this.contentInitLeftPos[index] +'px)';
-    }
-    // todo: set tab elem width and center position
-    setTabElemWidth(width: number) : void {
-
     }
     setTabActive(index: number) : void {
         let tabs = <HTMLCollection>this.linksChildren,
@@ -197,8 +200,6 @@ class Tabs {
             if(this.linksTotalWidth > maxWidth) {
                 // insert swapper if not existing
                 if(!this.checkIfSwapperExist()) {
-                    // set tabBar width for swapper
-                    this.setTabElemWidth(maxWidth);
                     // insert swapper
                     // create elems
                     let swapperLeftElem  =  <HTMLElement>document.createElement('div'),
@@ -254,19 +255,65 @@ class Tabs {
         return false;
     }
     swapLeft() : void {
-        // updateInkBarPosition() - get active tab and set it active
+        let linkBar = <HTMLElement>this.linksElement,
+            linkBarFirstChild = <HTMLElement>this.linksElement.firstElementChild,
+            linkBarFirstChildPos = linkBarFirstChild.getClientRects()[0],
+            actualTranslateX = <number>this.getTransformValues(<HTMLElement>this.linksElement),
+            leftDistanceLeft = <number>(linkBarFirstChildPos.left - 30) - this.linkBarInitPos.left,
+            realThis = this;
 
-        // check if linkBar left pos is not bigger than tabLinks Total Width + 30 - otherwise substract rest - id rest is 0 - dont do anything
-        let linkBarPos = this.linksElement.getClientRects()[0],
-            linkBarLastChild = <HTMLElement>this.linksElement.lastChild,
-            linkBarLastChildPos = linkBarLastChild.getClientRects()[0],
-            actualTranslateX = this.getTransformValues(<HTMLElement>this.linksElement);
-        if(linkBarLastChildPos.right > (linkBarPos.right + 30)) {
-            console.log('linkBarLastChildPos.right > (linkBarPos.right + 30)');
+        console.log(leftDistanceLeft);
+
+        if(leftDistanceLeft <= -100) {
+            // translate 30px
+            linkBar.style.transform = 'translateX('+ (actualTranslateX + 100) +'px)';
+            // todo: make timeout time dynamic for transition timee
+            setTimeout(function () {
+                realThis.setTabActive(realThis.getActiveTabIndex())
+            }, 600);
+        } else if(leftDistanceLeft <= 0) {
+            console.log(actualTranslateX);
+            console.log(leftDistanceLeft);
+            // translate rest of 30px
+            linkBar.style.transform = 'translateX(' + (actualTranslateX - leftDistanceLeft) + 'px)';
+            // todo: make timeout time dynamic for transition timee
+            setTimeout(function () {
+                realThis.setTabActive(realThis.getActiveTabIndex())
+            }, 600);
+        } else {
+            // don't do anything
         }
     }
     swapRight() : void {
         // updateInkBarPosition() - get active tab and set it active - same as left with firstchild and right translate
+        let linkBar = <HTMLElement>this.linksElement,
+            linkBarLastChild = <HTMLElement>this.linksElement.lastElementChild,
+            linkBarLastChildPos = linkBarLastChild.getClientRects()[0],
+            actualTranslateX = <number>this.getTransformValues(<HTMLElement>this.linksElement),
+            rightDistanceLeft = <number>(linkBarLastChildPos.right + 30) - this.linkBarInitPos.right,
+            realThis = this;
+
+        if(rightDistanceLeft >= 100) {
+            // translate 30px
+            linkBar.style.transform = 'translateX('+ (actualTranslateX - 100) +'px)';
+            // todo: make timeout time dynamic for transition timee
+            setTimeout(function () {
+                realThis.setTabActive(realThis.getActiveTabIndex())
+            }, 600);
+        } else if(rightDistanceLeft > 0) {
+            // translate rest of 30px
+            linkBar.style.transform = 'translateX('+ (actualTranslateX - rightDistanceLeft) +'px)';
+            // todo: make timeout time dynamic for transition timee
+            setTimeout(function () {
+                realThis.setTabActive(realThis.getActiveTabIndex())
+            }, 600);
+        } else {
+            // don't do anything
+        }
+    }
+    resetSwipe() : void {
+        let linkBar = <HTMLElement>this.linksElement;
+        linkBar.style.transform = 'translateX(0px)';
     }
     getTransformValues(elem: HTMLElement) : number {
         if(elem.style.transform) {
@@ -296,13 +343,19 @@ class Tabs {
         });
     }
     addWindowResizeEventListener() : void {
+        let realThis = this;
         window.addEventListener('resize', () => {
             this.screenWidth = window.innerWidth; // update screen width
             this.getTabContentWidth();
             this.setContentWidth();
             this.updateTabSwapper();
-            this.setTabActive(0);
+            this.resetSwipe();
+            this.linkBarInitPos = this.linksElement.getClientRects()[0];
             this.setContentInitLeftPos();
+            // todo: make timeout time dynamic for transition timee
+            setTimeout(function () {
+                realThis.setTabActive(0)
+            }, 600);
         });
     }
 
