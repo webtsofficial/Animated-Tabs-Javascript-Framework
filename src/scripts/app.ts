@@ -16,6 +16,8 @@ class Tabs {
     linksChildren: HTMLCollection;
     linksTotalWidth: number;
     linkBarInitPos: ClientRect;
+    linkBarFirstChildLeft: number;
+    linkBarLastChildRight: number;
     // content
     contentsElement: Element;
     contentsChildren: HTMLCollection;
@@ -38,6 +40,8 @@ class Tabs {
         this.contentsElement = this.findUniqueTabChildrenWithClass('webts-tab-contents');
         this.linksChildren = this.linksElement.children;
         this.contentsChildren = this.contentsElement.children;
+        this.linkBarFirstChildLeft = this.linksElement.firstElementChild.clientLeft;
+        this.linkBarLastChildRight = this.linksElement.lastElementChild.getClientRects()[0].right;
 
         // check if count tabs = count contents
         if(this.linksElement.children.length !== this.contentsElement.children.length) {
@@ -61,7 +65,6 @@ class Tabs {
             this.addWindowResizeEventListener();
         }
     }
-
     findUniqueTabChildrenWithClass(className: string) : HTMLElement {
         let elements = [],
             tabElemChildren = <HTMLCollection>this.tabsElement.children;
@@ -259,22 +262,24 @@ class Tabs {
             linkBarFirstChild = <HTMLElement>this.linksElement.firstElementChild,
             linkBarFirstChildPos = linkBarFirstChild.getClientRects()[0],
             actualTranslateX = <number>this.getTransformValues(<HTMLElement>this.linksElement),
-            leftDistanceLeft = <number>(linkBarFirstChildPos.left - 30) - this.linkBarInitPos.left,
+            leftDistanceLeft = <number>this.linkBarFirstChildLeft - this.linkBarInitPos.left,
             realThis = this;
 
         console.log(leftDistanceLeft);
 
         if(leftDistanceLeft <= -100) {
-            // translate 30px
+            // set translate 30px
+            this.linkBarFirstChildLeft += 100;
+            this.linkBarLastChildRight += 100;
             linkBar.style.transform = 'translateX('+ (actualTranslateX + 100) +'px)';
             // todo: make timeout time dynamic for transition timee
             setTimeout(function () {
                 realThis.setTabActive(realThis.getActiveTabIndex())
             }, 600);
         } else if(leftDistanceLeft <= 0) {
-            console.log(actualTranslateX);
-            console.log(leftDistanceLeft);
             // translate rest of 30px
+            this.linkBarFirstChildLeft -= leftDistanceLeft;
+            this.linkBarLastChildRight -= leftDistanceLeft;
             linkBar.style.transform = 'translateX(' + (actualTranslateX - leftDistanceLeft) + 'px)';
             // todo: make timeout time dynamic for transition timee
             setTimeout(function () {
@@ -290,11 +295,13 @@ class Tabs {
             linkBarLastChild = <HTMLElement>this.linksElement.lastElementChild,
             linkBarLastChildPos = linkBarLastChild.getClientRects()[0],
             actualTranslateX = <number>this.getTransformValues(<HTMLElement>this.linksElement),
-            rightDistanceLeft = <number>(linkBarLastChildPos.right + 30) - this.linkBarInitPos.right,
+            rightDistanceLeft = <number>(this.linkBarLastChildRight + 60) - this.linkBarInitPos.right,
             realThis = this;
 
         if(rightDistanceLeft >= 100) {
             // translate 30px
+            this.linkBarFirstChildLeft -= 100;
+            this.linkBarLastChildRight -= 100;
             linkBar.style.transform = 'translateX('+ (actualTranslateX - 100) +'px)';
             // todo: make timeout time dynamic for transition timee
             setTimeout(function () {
@@ -302,6 +309,8 @@ class Tabs {
             }, 600);
         } else if(rightDistanceLeft > 0) {
             // translate rest of 30px
+            this.linkBarFirstChildLeft -= rightDistanceLeft;
+            this.linkBarLastChildRight -= rightDistanceLeft;
             linkBar.style.transform = 'translateX('+ (actualTranslateX - rightDistanceLeft) +'px)';
             // todo: make timeout time dynamic for transition timee
             setTimeout(function () {

@@ -14,6 +14,8 @@ var Tabs = /** @class */ (function () {
         this.contentsElement = this.findUniqueTabChildrenWithClass('webts-tab-contents');
         this.linksChildren = this.linksElement.children;
         this.contentsChildren = this.contentsElement.children;
+        this.linkBarFirstChildLeft = this.linksElement.firstElementChild.clientLeft;
+        this.linkBarLastChildRight = this.linksElement.lastElementChild.getClientRects()[0].right;
         // check if count tabs = count contents
         if (this.linksElement.children.length !== this.contentsElement.children.length) {
             console.warn('Das Tab-Element mit dem Index ' + index + ' hat nicht genauso viele tabs wie Content-Boxen!');
@@ -217,10 +219,12 @@ var Tabs = /** @class */ (function () {
         return false;
     };
     Tabs.prototype.swapLeft = function () {
-        var linkBar = this.linksElement, linkBarFirstChild = this.linksElement.firstElementChild, linkBarFirstChildPos = linkBarFirstChild.getClientRects()[0], actualTranslateX = this.getTransformValues(this.linksElement), leftDistanceLeft = (linkBarFirstChildPos.left - 30) - this.linkBarInitPos.left, realThis = this;
+        var linkBar = this.linksElement, linkBarFirstChild = this.linksElement.firstElementChild, linkBarFirstChildPos = linkBarFirstChild.getClientRects()[0], actualTranslateX = this.getTransformValues(this.linksElement), leftDistanceLeft = this.linkBarFirstChildLeft - this.linkBarInitPos.left, realThis = this;
         console.log(leftDistanceLeft);
         if (leftDistanceLeft <= -100) {
-            // translate 30px
+            // set translate 30px
+            this.linkBarFirstChildLeft += 100;
+            this.linkBarLastChildRight += 100;
             linkBar.style.transform = 'translateX(' + (actualTranslateX + 100) + 'px)';
             // todo: make timeout time dynamic for transition timee
             setTimeout(function () {
@@ -228,9 +232,9 @@ var Tabs = /** @class */ (function () {
             }, 600);
         }
         else if (leftDistanceLeft <= 0) {
-            console.log(actualTranslateX);
-            console.log(leftDistanceLeft);
             // translate rest of 30px
+            this.linkBarFirstChildLeft -= leftDistanceLeft;
+            this.linkBarLastChildRight -= leftDistanceLeft;
             linkBar.style.transform = 'translateX(' + (actualTranslateX - leftDistanceLeft) + 'px)';
             // todo: make timeout time dynamic for transition timee
             setTimeout(function () {
@@ -243,9 +247,11 @@ var Tabs = /** @class */ (function () {
     };
     Tabs.prototype.swapRight = function () {
         // updateInkBarPosition() - get active tab and set it active - same as left with firstchild and right translate
-        var linkBar = this.linksElement, linkBarLastChild = this.linksElement.lastElementChild, linkBarLastChildPos = linkBarLastChild.getClientRects()[0], actualTranslateX = this.getTransformValues(this.linksElement), rightDistanceLeft = (linkBarLastChildPos.right + 30) - this.linkBarInitPos.right, realThis = this;
+        var linkBar = this.linksElement, linkBarLastChild = this.linksElement.lastElementChild, linkBarLastChildPos = linkBarLastChild.getClientRects()[0], actualTranslateX = this.getTransformValues(this.linksElement), rightDistanceLeft = (this.linkBarLastChildRight + 60) - this.linkBarInitPos.right, realThis = this;
         if (rightDistanceLeft >= 100) {
             // translate 30px
+            this.linkBarFirstChildLeft -= 100;
+            this.linkBarLastChildRight -= 100;
             linkBar.style.transform = 'translateX(' + (actualTranslateX - 100) + 'px)';
             // todo: make timeout time dynamic for transition timee
             setTimeout(function () {
@@ -254,6 +260,8 @@ var Tabs = /** @class */ (function () {
         }
         else if (rightDistanceLeft > 0) {
             // translate rest of 30px
+            this.linkBarFirstChildLeft -= rightDistanceLeft;
+            this.linkBarLastChildRight -= rightDistanceLeft;
             linkBar.style.transform = 'translateX(' + (actualTranslateX - rightDistanceLeft) + 'px)';
             // todo: make timeout time dynamic for transition timee
             setTimeout(function () {
