@@ -86,7 +86,15 @@
 
 // Swapper
 .webts-swapper {
+  cursor: pointer;
   position: absolute;
+  background-color: $color-swapper-bg;
+  color: $color-swapper-text;
+  @include transition(background-color, $transition-time-fast, ease-in-out);
+
+  &:hover, &:active {
+    background-color: #ccc;
+  }
 }
 .webts-swapper-left {
 

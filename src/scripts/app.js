@@ -20,8 +20,7 @@ var Tabs = /** @class */ (function () {
         }
         else {
             // init styling methods
-            this.linkBarWidth = this.getTabContentWidth();
-            this.updateTabSwapper();
+            this.updateTabLinksTotalWidth();
             this.setContentWidth();
             this.setContentInitLeftPos();
             // tab swapper
@@ -50,11 +49,11 @@ var Tabs = /** @class */ (function () {
         }
         else if (elements.length < 1) {
             console.warn('Es gibt kein Element mit der Klasse ' + className + ' innerhalb der webts-Tab-Box');
-            return new Element();
+            return new HTMLElement();
         }
         else {
             console.warn('Es gibt mehrere Elemente mit der Klasse ' + className + ' innerhalb der webts-Tab-Box');
-            return new Element();
+            return new HTMLElement();
         }
     };
     Tabs.prototype.getTabContentWidth = function () {
@@ -99,17 +98,18 @@ var Tabs = /** @class */ (function () {
         }
     };
     // todo
-    Tabs.prototype.updateInkBarInitPos = function () {
+    Tabs.prototype.getActiveTabIndex = function () {
+        return 1;
     };
     Tabs.prototype.moveInkBarToTab = function (index) {
-        var tabLink = this.linksChildren[index], tabLinkWidth = tabLink.clientWidth, tabPosition = tabLink.getClientRects(), inkBarElem = this.inkBar, inkBarWidth = inkBarElem.clientWidth, baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
+        var tabLink = this.linksChildren[index], tabLinkWidth = tabLink.clientWidth, tabPosition = tabLink.getClientRects()[0], inkBarElem = this.inkBar, inkBarWidth = inkBarElem.clientWidth, baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
         if (tabLinkWidth !== this.inkBarWidth) {
             // width scaling and translateX inkBar while transition
-            inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) + 'px) scaleX(' + (tabLinkWidth / inkBarWidth) + ')';
+            inkBarElem.style.transform = 'translateX(' + (tabPosition.left) + 'px) scaleX(' + (tabLinkWidth / inkBarWidth) + ')';
         }
         else {
             // only translateX must be applied
-            inkBarElem.style.transform = 'translateX(' + (tabPosition[0].left - baseLeftDistance) + 'px)';
+            inkBarElem.style.transform = 'translateX(' + (tabPosition.left) + 'px)';
         }
     };
     Tabs.prototype.slideContentToActiveTab = function (index) {
@@ -156,7 +156,7 @@ var Tabs = /** @class */ (function () {
         // insert id tabs total width bigger than 260px - not 320px because  30px for each side swapper
         // todo if else statement for checling if swapper exist + check if parent exist
         if (this.linksElement.parentElement instanceof HTMLElement) {
-            var maxWidth = this.linksElement.parentElement.clientWidth - 60;
+            var maxWidth = this.linksElement.parentElement.clientWidth - 60, linksElem = this.linksElement;
             if (this.linksTotalWidth > maxWidth) {
                 // insert swapper if not existing
                 if (!this.checkIfSwapperExist()) {
@@ -173,19 +173,34 @@ var Tabs = /** @class */ (function () {
                     // add styles
                     swapperLeftElem.style.left = tabsElemClientRect.left + 'px';
                     swapperLeftElem.style.top = tabsElemClientRect.top + 'px';
-                    swapperRightElem.style.right = tabsElemClientRect.right + 'px';
+                    swapperRightElem.style.right = tabsElemClientRect.left + 'px';
                     swapperRightElem.style.top = tabsElemClientRect.top + 'px';
                     // add text
                     swapperLeftElem.innerText = '<';
                     swapperRightElem.innerText = '>';
+                    // add padding to tabLinkBar
+                    linksElem.style.paddingLeft = '30px';
                     // insert after tab-contents
                     this.tabsElement.appendChild(swapperLeftElem);
                     this.tabsElement.appendChild(swapperRightElem);
+                    // append elem to class param
+                    this.swapperLeftElem = this.findUniqueTabChildrenWithClass('webts-swapper-left');
+                    this.swapperRightElem = this.findUniqueTabChildrenWithClass('webts-swapper-right');
+                    // add event Listener
+                    this.addSwapperClickEventListener();
+                    // add padding
+                    var paddingVert = (tabsElemClientRect.height - this.swapperLeftElem.clientHeight) / 4.6, paddingHor = (30 - this.swapperLeftElem.clientWidth) / 2;
+                    this.swapperLeftElem.style.padding = paddingVert + 'px ' + paddingHor + 'px';
+                    this.swapperRightElem.style.padding = paddingVert + 'px ' + paddingHor + 'px';
                 }
             }
             else {
-                // if exist delete swapper
+                // if exist delete swapper and delete params
                 if (this.checkIfSwapperExist()) {
+                    // remove tab bar padding left
+                    linksElem.style.paddingLeft = '0px';
+                    this.tabsElement.removeChild(this.swapperLeftElem);
+                    this.tabsElement.removeChild(this.swapperRightElem);
                 }
             }
         }
@@ -194,16 +209,29 @@ var Tabs = /** @class */ (function () {
         }
     };
     Tabs.prototype.checkIfSwapperExist = function () {
-        if (1 === 1) {
-            return false; // todo: make true and fill if stmt
+        if (this.tabsElement.getElementsByClassName('webts-swapper-left')[0] instanceof HTMLElement &&
+            this.tabsElement.getElementsByClassName('webts-swapper-right')[0] instanceof HTMLElement) {
+            return true;
         }
         return false;
     };
     Tabs.prototype.swapLeft = function () {
-        // updateInkBarPosition()
+        // updateInkBarPosition() - get active tab and set it active
+        // check if linkBar left pos is not bigger than tabLinks Total Width + 30 - otherwise substract rest - id rest is 0 - dont do anything
+        var linkBarPos = this.linksElement.getClientRects()[0], linkBarLastChild = this.linksElement.lastChild, linkBarLastChildPos = linkBarLastChild.getClientRects()[0], actualTranslateX = this.getTransformValues(this.linksElement);
+        if (linkBarLastChildPos.right > (linkBarPos.right + 30)) {
+            console.log('linkBarLastChildPos.right > (linkBarPos.right + 30)');
+        }
     };
     Tabs.prototype.swapRight = function () {
-        // updateInkBarPosition()
+        // updateInkBarPosition() - get active tab and set it active - same as left with firstchild and right translate
+    };
+    Tabs.prototype.getTransformValues = function (elem) {
+        if (elem.style.transform) {
+            var pixels = parseFloat(elem.style.transform.split(/[()]/)[1]);
+            return pixels;
+        }
+        return 0;
     };
     // Event Listener Creation
     Tabs.prototype.addTabClickEventListener = function () {
@@ -218,6 +246,15 @@ var Tabs = /** @class */ (function () {
         for (var i = 0; i < linksChildren.length; i++) {
             _loop_1(i);
         }
+    };
+    Tabs.prototype.addSwapperClickEventListener = function () {
+        var _this = this;
+        this.swapperLeftElem.addEventListener('click', function () {
+            _this.swapLeft();
+        });
+        this.swapperRightElem.addEventListener('click', function () {
+            _this.swapRight();
+        });
     };
     Tabs.prototype.addWindowResizeEventListener = function () {
         var _this = this;
