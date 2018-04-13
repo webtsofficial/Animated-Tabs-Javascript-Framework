@@ -14,8 +14,13 @@ var Tabs = /** @class */ (function () {
         this.contentsElement = this.findUniqueTabChildrenWithClass('webts-tab-contents');
         this.linksChildren = this.linksElement.children;
         this.contentsChildren = this.contentsElement.children;
-        this.linkBarFirstChildLeft = this.linksElement.firstElementChild.clientLeft;
-        this.linkBarLastChildRight = this.linksElement.lastElementChild.getClientRects()[0].right;
+        if (this.linksElement.firstElementChild && this.linksElement.lastElementChild) {
+            this.linkBarFirstChildLeft = this.linksElement.firstElementChild.clientLeft;
+            this.linkBarLastChildRight = this.linksElement.lastElementChild.getClientRects()[0].right;
+        }
+        else {
+            console.warn('LinkBarFirstChild-Element und LinkBarLastChild-Element sind nicht definiert');
+        }
         // check if count tabs = count contents
         if (this.linksElement.children.length !== this.contentsElement.children.length) {
             console.warn('Das Tab-Element mit dem Index ' + index + ' hat nicht genauso viele tabs wie Content-Boxen!');
@@ -122,6 +127,7 @@ var Tabs = /** @class */ (function () {
     };
     Tabs.prototype.slideContentToActiveTab = function (index) {
         var contentElem = this.contentsChildren[index], contents = this.contentsElement, contentElemLeft = contentElem.getClientRects()[0].left, contentsLeft = contents.getClientRects()[0].left;
+        console.log(this.contentInitLeftPos[index]);
         contents.style.transform = 'translateX(-' + this.contentInitLeftPos[index] + 'px)';
     };
     Tabs.prototype.setTabActive = function (index) {

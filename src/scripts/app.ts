@@ -120,7 +120,6 @@ class Tabs {
             let contentElem = <HTMLElement>contentsChildren[i],
                 contentLeft = <number>contentElem.getClientRects()[0].left;
             this.contentInitLeftPos.push(contentLeft);
-            console.log(this.contentInitLeftPos)
         }
     }
     createInkBarElement() : void {
@@ -161,6 +160,7 @@ class Tabs {
             contents = <HTMLElement>this.contentsElement,
             contentElemLeft = contentElem.getClientRects()[0].left,
             contentsLeft = contents.getClientRects()[0].left;
+        console.log(this.contentInitLeftPos[index]);
         contents.style.transform = 'translateX(-'+ this.contentInitLeftPos[index] +'px)';
     }
     setTabActive(index: number) : void {
