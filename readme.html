@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<meta charset="utf-8"/>
+</head>
+<body>
+
+<p>#webts-animated-tabs v1.0.0
+##Installation
+###npm</p>
+
+<pre><code>npm install webts-animated-tabs --save
+</code></pre>
+
+<blockquote>
+<p>Till now webts-animated-tabs can only be installed via npm - more coming soon
+###HTML</p>
+</blockquote>
+
+<pre><code class="html">&lt;head&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;node_modules/webts-animated-tabs/src/styles/css/main.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;script type=&quot;text/javascript&quot; src=&quot;node_modules/webts-animated-tabs/src/scripts/app.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+</code></pre>
+
+<p>##Usage
+As soon as you have mported all the scripts you are ready to strat. Only add the CSS classes in the following way to achieve incredible tabs.</p>
+
+<pre><code class="html">&lt;div class=&quot;webts-tabs&quot;&gt;
+    &lt;nav class=&quot;webts-tab-links&quot;&gt;
+        &lt;div&gt;Tab 1&lt;/div&gt;
+        &lt;div&gt;Tab 2&lt;/div&gt;
+        &lt;div&gt;Tab 3&lt;/div&gt;
+        &lt;div&gt;Tab 4&lt;/div&gt;
+    &lt;/nav&gt;
+        &lt;div class=&quot;webts-tab-contents&quot;&gt;
+        &lt;div&gt;Content 1&lt;/div&gt;
+        &lt;div&gt;Content 2&lt;/div&gt;
+        &lt;div&gt;Content 3&lt;/div&gt;
+        &lt;div&gt;Content 4&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>##Customization
+You can customize the tabs via the scss variables inside the src/styles/scss/main.scss file. Whatch out to make this in the node modules folder, because when updating packages the changes get overwritten.</p>
+
+<pre><code class="scss">$color-tab-bg:          #fff;
+$color-tab-active-bg:   #f1f1f1;
+$color-tab-hover-bg:    #f9f9f9;
+$color-ink-bar:         #ff696d;
+$color-swapper-bg:      rgba(220,220,220,0.75);
+$color-swapper-hover-bg:rgba(220,220,220,0.3);
+$color-swapper-text:    #333;
+
+$transition-time-slow:    1s;
+$transition-time-medium:  0.7s;
+$transition-time-fast:    0.3s;
+</code></pre>
+
+<blockquote>
+<p>I&#8217;m working on making the customization via javascript and a options parameter in for the Tab-Class</p>
+</blockquote>
+
+</body>
+</html>
+

@@ -1,13 +1,18 @@
 {
   "name": "webts-animated-tabs",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "An Tab Library with css and Javascript for styling tabs and make them interactive via an inkBar and animations.",
+  "main": "src/scripts/app.ts",
   "scripts": {
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webtsofficial/Animated-Tabs-Javascript-Framework.git"
+  },
+  "keywords": ["tabs", "animated", "webts", "inkBar", "ink-bar", "slide"],
+  "author": "Tobias Schramek",
   "license": "ISC",
   "devDependencies": {
-    "node-sass": "^4.8.3"
+
   }
 }

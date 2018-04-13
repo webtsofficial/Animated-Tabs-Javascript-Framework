@@ -331,8 +331,7 @@ class Tabs {
     }
     getTransformValues(elem: HTMLElement) : number {
         if(elem.style.transform) {
-            let pixels = parseFloat(elem.style.transform.split(/[()]/)[1]);
-            return pixels;
+            return parseFloat(elem.style.transform.split(/[()]/)[1]);
         }
         return 0;
     }
