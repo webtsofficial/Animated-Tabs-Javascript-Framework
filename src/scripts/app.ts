@@ -69,6 +69,24 @@ class Tabs {
             this.addWindowResizeEventListener();
         }
     }
+
+    // general
+    getActiveTabIndex() : number {
+        for(let i = 0; i < this.linksChildren.length; i++) {
+            let link = this.linksChildren[i];
+            if(link.classList.contains('active')) {
+                return i;
+            }
+        }
+        return NaN;
+    }
+    getTransformValues(elem: HTMLElement) : number {
+        if(elem.style.transform) {
+            return parseFloat(elem.style.transform.split(/[()]/)[1]);
+        }
+        return 0;
+    }
+    // tabs-elem
     findUniqueTabChildrenWithClass(className: string) : HTMLElement {
         let elements = [],
             tabElemChildren = <HTMLCollection>this.tabsElement.children;
@@ -90,79 +108,7 @@ class Tabs {
         }
 
     }
-    getTabContentWidth() : number {
-        if(this.linksElement instanceof Element) {
-            return this.tabsElement.clientWidth;
-        } else {
-            console.warn('linksElement is not of type Element!');
-            return 0;
-        }
-    }
-    setContentWidth() : void {
-        let contentsChilds = <HTMLCollection>this.contentsChildren;
-        // set total content width
-        this.contentsElement.setAttribute('style', 'width: ' + (this.tabsElement.clientWidth * contentsChilds.length) + 'px');
-
-        if(contentsChilds instanceof HTMLCollection) {
-            for(let i = 0; i < contentsChilds.length; i++) {
-                let contentElem = contentsChilds[i];
-                contentElem.setAttribute('style', 'width:' + this.tabsElement.clientWidth + 'px');
-            }
-        } else {
-            console.warn('contentsElement.children ist keine HTML-Collection');
-        }
-    }
-    setContentInitLeftPos() {
-        let contentsChildren = this.contentsChildren;
-        this.contentInitLeftPos = [];
-
-        for(let i = 0; i < contentsChildren.length; i++) {
-            let contentElem = <HTMLElement>contentsChildren[i],
-                contentLeft = <number>contentElem.getClientRects()[0].left;
-            this.contentInitLeftPos.push(contentLeft);
-        }
-    }
-    createInkBarElement() : void {
-        let elem = <HTMLElement>document.createElement('div');
-        elem.classList.add('webts-ink-bar');
-        if(this.linksElement.parentNode instanceof HTMLElement) {
-            this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
-        } else {
-            console.warn('Das Eltern Element zum erstellen der InkBar ist kein HTML Element!');
-        }
-    }
-    getActiveTabIndex() : number {
-        for(let i = 0; i < this.linksChildren.length; i++) {
-            let link = this.linksChildren[i];
-            if(link.classList.contains('active')) {
-                return i;
-            }
-        }
-        return NaN;
-    }
-    moveInkBarToTab(index: number) : void {
-        let tabLink = <HTMLElement>this.linksChildren[index],
-            tabLinkWidth = <number>tabLink.clientWidth,
-            tabPosition = tabLink.getClientRects()[0],
-            inkBarElem = <HTMLElement>this.inkBar,
-            inkBarWidth = inkBarElem.clientWidth,
-            baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
-        if(tabLinkWidth !== this.inkBarWidth) {
-            // width scaling and translateX inkBar while transition
-            inkBarElem.style.transform = 'translateX(' + (tabPosition.left) +'px) scaleX('+ (tabLinkWidth / inkBarWidth) +')';
-        } else {
-            // only translateX must be applied
-            inkBarElem.style.transform = 'translateX(' + (tabPosition.left) +'px)';
-        }
-    }
-    slideContentToActiveTab(index: number) {
-        let contentElem = <HTMLElement>this.contentsChildren[index],
-            contents = <HTMLElement>this.contentsElement,
-            contentElemLeft = contentElem.getClientRects()[0].left,
-            contentsLeft = contents.getClientRects()[0].left;
-        console.log(this.contentInitLeftPos[index]);
-        contents.style.transform = 'translateX(-'+ this.contentInitLeftPos[index] +'px)';
-    }
+    // links
     setTabActive(index: number) : void {
         let tabs = <HTMLCollection>this.linksChildren,
             contents = <HTMLCollection>this.contentsChildren;
@@ -199,6 +145,73 @@ class Tabs {
         }
         this.linksTotalWidth = tabsTotalWidth;
     }
+    // content
+    getTabContentWidth() : number {
+        if(this.linksElement instanceof Element) {
+            return this.tabsElement.clientWidth;
+        } else {
+            console.warn('linksElement is not of type Element!');
+            return 0;
+        }
+    }
+    setContentWidth() : void {
+        let contentsChilds = <HTMLCollection>this.contentsChildren;
+        // set total content width
+        this.contentsElement.setAttribute('style', 'width: ' + (this.tabsElement.clientWidth * contentsChilds.length) + 'px');
+
+        if(contentsChilds instanceof HTMLCollection) {
+            for(let i = 0; i < contentsChilds.length; i++) {
+                let contentElem = contentsChilds[i];
+                contentElem.setAttribute('style', 'width:' + this.tabsElement.clientWidth + 'px');
+            }
+        } else {
+            console.warn('contentsElement.children ist keine HTML-Collection');
+        }
+    }
+    setContentInitLeftPos() {
+        let contentsChildren = this.contentsChildren;
+        this.contentInitLeftPos = [];
+
+        for(let i = 0; i < contentsChildren.length; i++) {
+            let contentElem = <HTMLElement>contentsChildren[i],
+                contentLeft = <number>contentElem.getClientRects()[0].left;
+            this.contentInitLeftPos.push(contentLeft);
+        }
+    }
+    slideContentToActiveTab(index: number) {
+        let contentElem = <HTMLElement>this.contentsChildren[index],
+            contents = <HTMLElement>this.contentsElement,
+            contentElemLeft = contentElem.getClientRects()[0].left,
+            contentsLeft = contents.getClientRects()[0].left;
+        console.log(this.contentInitLeftPos[index]);
+        contents.style.transform = 'translateX(-'+ this.contentInitLeftPos[index] +'px)';
+    }
+    // inkBar
+    createInkBarElement() : void {
+        let elem = <HTMLElement>document.createElement('div');
+        elem.classList.add('webts-ink-bar');
+        if(this.linksElement.parentNode instanceof HTMLElement) {
+            this.linksElement.parentNode.insertBefore(elem, this.linksElement.nextSibling);
+        } else {
+            console.warn('Das Eltern Element zum erstellen der InkBar ist kein HTML Element!');
+        }
+    }
+    moveInkBarToTab(index: number) : void {
+        let tabLink = <HTMLElement>this.linksChildren[index],
+            tabLinkWidth = <number>tabLink.clientWidth,
+            tabPosition = tabLink.getClientRects()[0],
+            inkBarElem = <HTMLElement>this.inkBar,
+            inkBarWidth = inkBarElem.clientWidth,
+            baseLeftDistance = this.linksElement.children[0].getClientRects()[0].left;
+        if(tabLinkWidth !== this.inkBarWidth) {
+            // width scaling and translateX inkBar while transition
+            inkBarElem.style.transform = 'translateX(' + (tabPosition.left) +'px) scaleX('+ (tabLinkWidth / inkBarWidth) +')';
+        } else {
+            // only translateX must be applied
+            inkBarElem.style.transform = 'translateX(' + (tabPosition.left) +'px)';
+        }
+    }
+    // swapper
     updateTabSwapper() : void {
         // insert id tabs total width bigger than 260px - not 320px because  30px for each side swapper
         // todo if else statement for checling if swapper exist + check if parent exist
@@ -329,13 +342,6 @@ class Tabs {
         let linkBar = <HTMLElement>this.linksElement;
         linkBar.style.transform = 'translateX(0px)';
     }
-    getTransformValues(elem: HTMLElement) : number {
-        if(elem.style.transform) {
-            return parseFloat(elem.style.transform.split(/[()]/)[1]);
-        }
-        return 0;
-    }
-
     // Event Listener Creation
     addTabClickEventListener() : void {
         let linksChildren = <HTMLCollection>this.linksElement.children;

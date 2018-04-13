@@ -284,8 +284,7 @@ var Tabs = /** @class */ (function () {
     };
     Tabs.prototype.getTransformValues = function (elem) {
         if (elem.style.transform) {
-            var pixels = parseFloat(elem.style.transform.split(/[()]/)[1]);
-            return pixels;
+            return parseFloat(elem.style.transform.split(/[()]/)[1]);
         }
         return 0;
     };
